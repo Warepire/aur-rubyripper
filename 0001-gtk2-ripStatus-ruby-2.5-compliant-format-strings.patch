@@ -1,0 +1,41 @@
+From 677d572bfae2737893b6e11b6fbe118996642fef Mon Sep 17 00:00:00 2001
+From: Warepire <Warepire@users.noreply.github.com>
+Date: Thu, 12 Apr 2018 18:35:46 +0200
+Subject: [PATCH] gtk2: ripStatus: ruby 2.5 compliant format strings
+
+Avoids the following crash while extracting a CD with ruby 2.5:
+ #<Thread:0x00007f3dd82f1710@/bin/rrip_gui:77 run> terminated with exception (report_on_exception is true):
+ Traceback (most recent call last):
+         2: from /bin/rrip_gui:85:in `block in update'
+         1: from /usr/lib/rubyripper/gtk2/ripStatus.rb:40:in `updateProgress'
+ /usr/lib/rubyripper/gtk2/ripStatus.rb:40:in `%': incomplete format specifier; use %% (double %) instead (ArgumentError)
+ Traceback (most recent call last):
+         2: from /bin/rrip_gui:85:in `block in update'
+         1: from /usr/lib/rubyripper/gtk2/ripStatus.rb:40:in `updateProgress'
+ /usr/lib/rubyripper/gtk2/ripStatus.rb:40:in `%': incomplete format specifier; use %% (double %) instead (ArgumentError)
+
+Upstream-Status: Submitted [ https://github.com/bleskodev/rubyripper/pull/613 ]
+---
+ lib/rubyripper/gtk2/ripStatus.rb | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/rubyripper/gtk2/ripStatus.rb b/lib/rubyripper/gtk2/ripStatus.rb
+index b970a5b..68ae73c 100644
+--- a/lib/rubyripper/gtk2/ripStatus.rb
++++ b/lib/rubyripper/gtk2/ripStatus.rb
+@@ -34,10 +34,10 @@ class RipStatus
+   def updateProgress(type, value)
+     progress = "%.3g" % (value * 100)
+     if type == 'encoding'
+-      @encBar.text = _("Encoding progress %s \%") % [progress]
++      @encBar.text = _("Encoding progress %s %%") % [progress]
+       @encBar.fraction = value
+     else
+-      @ripBar.text = _("Ripping progress %s \%") % progress
++      @ripBar.text = _("Ripping progress %s %%") % progress
+       @ripBar.fraction = value
+     end
+   end
+-- 
+2.16.2
+
